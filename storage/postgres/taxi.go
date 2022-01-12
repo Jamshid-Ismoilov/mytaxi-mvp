@@ -157,3 +157,78 @@ func (t *taxiRepo) DeleteDriver(id string) error {
 	return nil
 }
 
+
+func (t *taxiRepo) CreateOrder(order pb.Order) (pb.FullOrder, error) {
+
+	var id string
+	err := t.db.QueryRow(`
+        INSERT INTO orders(id, driver_id, client_id, status)
+        VALUES ($1,$2,$3) returning id`, order.Id, order.DriverId, order.ClientId, order.Status).Scan(&id)
+	if err != nil {
+		return pb.FullOrder{}, err
+	}
+	fullOrder, err := t.GetOrder(id)
+
+	if err != nil {
+		return pb.FullOrder{}, err
+	}
+
+	return fullOrder, nil
+}
+
+func (t *taxiRepo) GetOrder(id string) (pb.FullOrder, error) {
+
+	var fullOrder pb.FullOrder
+	var driverId, clientId string
+
+	err := t.db.QueryRow(`
+        SELECT id, driver_id, client_id, status FROM orders
+        WHERE id=$1 and deleted_at is null`, id).Scan(
+			&fullOrder.Id, 
+			&driverId, 
+			&clientId, 
+			&fullOrder.Status, 
+		)
+
+	if err != nil {
+		return pb.FullOrder{}, err
+	}
+
+	*fullOrder.Driver, err = t.GetDriver(driverId)
+	*fullOrder.Client, err = t.GetClient(clientId)
+
+	return fullOrder, nil
+}
+
+
+func (t *taxiRepo) UpdateOrder(order pb.Order) (pb.Order, error) {
+	result, err := t.db.Exec(`UPDATE orders SET status=$2, updated_at=current_timestamp WHERE id=$1`,
+		order.Id, order.Status)
+	if err != nil {
+		return pb.Client{}, err
+	}
+
+	if i, _ := result.RowsAffected(); i == 0 {
+		return pb.Client{}, sql.ErrNoRows
+	}
+
+	res, err := t.GetClient(client.Id)
+	if err != nil {
+		return pb.Client{}, err
+	}
+
+	return res, nil
+}
+
+func (t *taxiRepo) DeleteClient(id string) error {
+	result, err := t.db.Exec(`UPDATE clients SET deleted_at = current_timestamp WHERE id=$1`, id)
+	if err != nil {
+		return err
+	}
+
+	if i, _ := result.RowsAffected(); i == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}

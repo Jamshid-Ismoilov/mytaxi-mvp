@@ -13,7 +13,7 @@ service TaxiService {
     rpc GetDriver(ByIdReq) returns (Driver);
     rpc UpdateDriver(Driver) returns (Driver);
  
-    rpc CreateOrder(Order) returns (Order);
+    rpc CreateOrder(Order) returns (FullOrder);
     rpc DeleteOrder(ByIdReq) returns (EmptyResp);
     rpc GetOrder(ByIdReq) returns (FullOrder);
     rpc ListOrder(ListReq) returns (ListResp);

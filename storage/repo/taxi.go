@@ -17,7 +17,7 @@ type TaxiStorageI interface {
 	GetDriver(id string) (pb.Driver, error)
 	UpdateDriver(pb.Driver) (pb.Driver, error)
 	
-	CreateOrder(pb.Order) (pb.Order, error)
+	CreateOrder(pb.Order) (pb.FullOrder, error)
 	DeleteOrder(id string) (error)
 	GetOrder(id string) (pb.FullOrder, error)
 	ListOrder(clientid string, from, to string, page, limit int64) ([]*pb.Order, int64, error)
