@@ -57,7 +57,7 @@ func (t *taxiRepo) GetClient(id string) (pb.Client, error) {
 
 
 func (t *taxiRepo) UpdateClient(client pb.Client) (pb.Client, error) {
-	result, err := t.db.Exec(`UPDATE clients SET fullname=$2, phone=$3, updated_at=current_timestamp WHERE id=$1`,
+	result, err := t.db.Exec(`UPDATE clients SET fullname=$2, phone=$3 WHERE id=$1`,
 		client.Id, client.Fullname, client.Phone)
 	if err != nil {
 		return pb.Client{}, err
@@ -126,7 +126,7 @@ func (t *taxiRepo) GetDriver(id string) (pb.Driver, error) {
 
 
 func (t *taxiRepo) UpdateDriver(driver pb.Driver) (pb.Driver, error) {
-	result, err := t.db.Exec(`UPDATE drivers SET fullname=$2, phone=$3, updated_at=current_timestamp WHERE id=$1`,
+	result, err := t.db.Exec(`UPDATE drivers SET fullname=$2, phone=$3 WHERE id=$1`,
 		driver.Id, driver.Fullname, driver.Phone)
 	if err != nil {
 		return pb.Driver{}, err
