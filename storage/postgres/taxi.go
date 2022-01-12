@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"database/sql"
-	// "time"
+	"time"
 	// "fmt"
 
 	"github.com/jmoiron/sqlx"
@@ -205,23 +205,25 @@ func (t *taxiRepo) UpdateOrder(order pb.Order) (pb.Order, error) {
 	result, err := t.db.Exec(`UPDATE orders SET status=$2, updated_at=current_timestamp WHERE id=$1`,
 		order.Id, order.Status)
 	if err != nil {
-		return pb.Client{}, err
+		return pb.Order{}, err
 	}
 
 	if i, _ := result.RowsAffected(); i == 0 {
-		return pb.Client{}, sql.ErrNoRows
+		return pb.Order{}, sql.ErrNoRows
 	}
 
-	res, err := t.GetClient(client.Id)
+	res, err := t.GetOrder(order.Id)
 	if err != nil {
-		return pb.Client{}, err
+		return pb.Order{}, err
 	}
-
-	return res, nil
+	
+	order.Status = res.Status
+	
+	return order, nil
 }
 
-func (t *taxiRepo) DeleteClient(id string) error {
-	result, err := t.db.Exec(`UPDATE clients SET deleted_at = current_timestamp WHERE id=$1`, id)
+func (t *taxiRepo) DeleteOrder(id string) error {
+	result, err := t.db.Exec(`UPDATE orders SET deleted_at = current_timestamp WHERE id=$1`, id)
 	if err != nil {
 		return err
 	}
@@ -231,4 +233,43 @@ func (t *taxiRepo) DeleteClient(id string) error {
 	}
 
 	return nil
+}
+
+func (t *taxiRepo) ListOrder(clientId string, from, to string, page, limit int64) ([]*pb.Order, int64, error) {
+	offset := (page - 1) * limit
+	
+	if from == "" || to == "" {
+		from = "2000-01-01"
+		to = time.Now().String()
+	}
+	
+	rows, err := t.db.Queryx(
+		`SELECT id, driver_id, client_id, status FROM orders WHERE id = $1 and created_at > $2::timestamp and created at < $3::timestamp LIMIT $4 OFFSET $5`,
+		clientId, from, to, limit, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	if err = rows.Err(); err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close() // nolint:errcheck
+
+	var (
+		orders []*pb.Order
+		order  pb.Order
+		count int64
+	)
+	for rows.Next() {
+		err = rows.Scan(&order.Id, &order.DriverId, &order.ClientId, &order.Status)
+	if err != nil {
+			return nil, 0, err
+		}
+		orders = append(orders, &order)
+	}
+
+	err = t.db.QueryRow(`SELECT count(*) FROM orders WHERE id = $1 and created_at > $2::timestamp and created at < $3::timestamp`).Scan(&count)
+	if err != nil {
+		return nil, 0, err
+	}
+	return orders, count, nil
 }
