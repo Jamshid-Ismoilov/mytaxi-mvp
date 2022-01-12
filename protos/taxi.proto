@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package taxi;
+
+service TaxiService {
+    rpc CreateClient(Client) returns (Client);
+    rpc DeleteClient(ByIdReq) returns (EmptyResp);
+    rpc GetClient(ByIdReq) returns (Client);
+    rpc UpdateClient(Client) returns (Client);
+ 
+    rpc CreateDriver(Driver) returns (Driver);
+    rpc DeleteDriver(ByIdReq) returns (EmptyResp);
+    rpc GetDriver(ByIdReq) returns (Driver);
+    rpc UpdateDriver(Driver) returns (Driver);
+ 
+    rpc CreateOrder(Order) returns (Order);
+    rpc DeleteOrder(ByIdReq) returns (EmptyResp);
+    rpc GetOrder(ByIdReq) returns (FullOrder);
+    rpc ListOrder(ListReq) returns (ListResp);
+    rpc UpdateOrder(Order) returns (Order);
+}
+
+message EmptyResp {}
+
+message Driver {
+    string id = 1;
+    string fullname = 2;
+    string phone = 3;
+}
+
+message Client {
+    string id = 1;
+    string fullname = 2;
+    string phone = 3;
+}
+
+message FullOrder {
+    string id = 1;
+    string status = 2;
+    Driver driver = 3;
+    Client client = 4;
+}
+
+message Order {
+    string id = 1;
+    string status = 2;
+    string driverId = 3;
+    string clientId = 4;
+}
+
+message ByIdReq {
+    string id = 1;
+}
+
+message ListReq {
+    string clientId = 1;
+    string from = 2;
+    string to = 3;
+    int64 page = 4;
+    int64 limit = 5;
+}
+
+message ListResp {
+    repeated Order orders = 1;
+    int64 count = 2;
+}
