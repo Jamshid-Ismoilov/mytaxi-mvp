@@ -21,7 +21,7 @@ type storagePg struct {
 func NewStoragePg(db *sqlx.DB) *storagePg {
 	return &storagePg{
 		db:       db,
-		taskRepo: postgres.NewTaxiRepo(db),
+		taxiRepo: postgres.NewTaxiRepo(db),
 	}
 }
 

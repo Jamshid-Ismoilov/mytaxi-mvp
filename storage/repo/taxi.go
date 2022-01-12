@@ -8,18 +8,18 @@ import (
 
 type TaxiStorageI interface {
 	CreateClient(pb.Client) (pb.Client, error)
-	DeleteClient(pb.ByIdReq) (error)
-	GetClient(pb.ByIdReq) (pb.Client, error)
+	DeleteClient(id string) (error)
+	GetClient(id string) (pb.Client, error)
 	UpdateClient(pb.Client) (pb.Client, error)
 
 	CreateDriver(pb.Driver) (pb.Driver, error)
-	DeleteDriver(pb.ByIdReq) (error)
-	GetDriver(pb.ByIdReq) (pb.Driver, error)
+	DeleteDriver(id string) (error)
+	GetDriver(id string) (pb.Driver, error)
 	UpdateDriver(pb.Driver) (pb.Driver, error)
 	
 	CreateOrder(pb.Order) (pb.Order, error)
-	DeleteOrder(pb.ByIdReq) (error)
-	GetOrder(pb.ByIdReq) (pb.FullOrder, error)
-	ListOrder(clientId, from, to string, page limit int64) ([]*pb.Order, int64, error)
+	DeleteOrder(id string) (error)
+	GetOrder(id string) (pb.FullOrder, error)
+	ListOrder(clientid string, from, to string, page, limit int64) ([]*pb.Order, int64, error)
 	UpdateOrder(pb.Order) (pb.Order, error)
 }

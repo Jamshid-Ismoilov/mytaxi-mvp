@@ -1,3 +1,6 @@
+# github.com/Jamshid-Ismoilov/todo-grpc v0.0.0-20211222151159-ce7e76341086
+## explicit; go 1.17
+github.com/Jamshid-Ismoilov/todo-grpc/config
 # github.com/gofrs/uuid v4.2.0+incompatible
 ## explicit
 github.com/gofrs/uuid
@@ -26,7 +29,7 @@ go.uber.org/atomic
 # go.uber.org/multierr v1.6.0
 ## explicit; go 1.12
 go.uber.org/multierr
-# go.uber.org/zap v1.19.1
+# go.uber.org/zap v1.20.0
 ## explicit; go 1.13
 go.uber.org/zap
 go.uber.org/zap/buffer

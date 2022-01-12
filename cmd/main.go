@@ -36,7 +36,7 @@ func main() {
 
 	pgStorage := storage.NewStoragePg(connDB)
 
-	userService := service.NewTaskService(pgStorage, log)
+	taxiService := service.NewTaxiService(pgStorage, log)
 
 	lis, err := net.Listen("tcp", cfg.RPCPort)
 	if err != nil {
@@ -44,7 +44,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterTaskServiceServer(s, userService)
+	pb.RegisterTaxiServiceServer(s, taxiService)
 	log.Info("main: server running",
 		logger.String("port", cfg.RPCPort))
 
