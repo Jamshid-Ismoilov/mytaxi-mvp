@@ -2,13 +2,14 @@ package service
 
 import (
 	"context"
+
+	"github.com/gofrs/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	pb "github.com/Jamshid-Ismoilov/mytaxi-mvp/genproto"
 	l "github.com/Jamshid-Ismoilov/mytaxi-mvp/pkg/logger"
 	"github.com/Jamshid-Ismoilov/mytaxi-mvp/storage"
-	"github.com/gofrs/uuid"
 )
 
 // TaxiService is an object that implements TaxiServiceServer interface in genproto.
@@ -26,7 +27,6 @@ func NewTaxiService(storage storage.IStorage, log l.Logger) *TaxiService {
 }
 
 func (t *TaxiService) CreateClient(ctx context.Context, req *pb.Client) (*pb.Client, error) {
-	
 	id, err := uuid.NewV4()
 	if err != nil {
 		t.logger.Error("failed while generating uuid", l.Error(err))
@@ -73,9 +73,7 @@ func (t *TaxiService) DeleteClient(ctx context.Context, req *pb.ByIdReq) (*pb.Em
 	return &pb.EmptyResp{}, nil
 }
 
-
 func (t *TaxiService) CreateDriver(ctx context.Context, req *pb.Driver) (*pb.Driver, error) {
-	
 	id, err := uuid.NewV4()
 	if err != nil {
 		t.logger.Error("failed while generating uuid", l.Error(err))
@@ -122,8 +120,7 @@ func (t *TaxiService) DeleteDriver(ctx context.Context, req *pb.ByIdReq) (*pb.Em
 	return &pb.EmptyResp{}, nil
 }
 
-
-func (t *TaxiService) CreateOrder(ctx context.Context, req *pb.Order) (*pb.FullOrder, error) {	
+func (t *TaxiService) CreateOrder(ctx context.Context, req *pb.Order) (*pb.FullOrder, error) {
 	id, err := uuid.NewV4()
 	if err != nil {
 		t.logger.Error("failed while generating uuid", l.Error(err))
@@ -179,6 +176,6 @@ func (t *TaxiService) ListOrder(ctx context.Context, req *pb.ListReq) (*pb.ListR
 
 	return &pb.ListResp{
 		Orders: orders,
-		Count: count,
+		Count:  count,
 	}, nil
 }
