@@ -36,8 +36,8 @@ func (t *TaxiService) CreateClient(ctx context.Context, req *pb.Client) (*pb.Cli
 
 	client, err := t.storage.Taxi().CreateClient(*req)
 	if err != nil {
-		t.logger.Error("failed to create task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to create task")
+		t.logger.Error("failed to create client", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to create order")
 	}
 
 	return &client, nil
@@ -46,8 +46,8 @@ func (t *TaxiService) CreateClient(ctx context.Context, req *pb.Client) (*pb.Cli
 func (t *TaxiService) GetClient(ctx context.Context, req *pb.ByIdReq) (*pb.Client, error) {
 	client, err := t.storage.Taxi().GetClient(req.GetId())
 	if err != nil {
-		t.logger.Error("failed to get task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to get task")
+		t.logger.Error("failed to get client", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to get order")
 	}
 
 	return &client, nil
@@ -56,8 +56,8 @@ func (t *TaxiService) GetClient(ctx context.Context, req *pb.ByIdReq) (*pb.Clien
 func (t *TaxiService) UpdateClient(ctx context.Context, req *pb.Client) (*pb.Client, error) {
 	client, err := t.storage.Taxi().UpdateClient(*req)
 	if err != nil {
-		t.logger.Error("failed to update task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to update task")
+		t.logger.Error("failed to update client", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to update order")
 	}
 
 	return &client, nil
@@ -66,8 +66,8 @@ func (t *TaxiService) UpdateClient(ctx context.Context, req *pb.Client) (*pb.Cli
 func (t *TaxiService) DeleteClient(ctx context.Context, req *pb.ByIdReq) (*pb.EmptyResp, error) {
 	err := t.storage.Taxi().DeleteClient(req.Id)
 	if err != nil {
-		t.logger.Error("failed to delete task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to delete task")
+		t.logger.Error("failed to delete client", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to delete order")
 	}
 
 	return &pb.EmptyResp{}, nil
@@ -85,8 +85,8 @@ func (t *TaxiService) CreateDriver(ctx context.Context, req *pb.Driver) (*pb.Dri
 
 	driver, err := t.storage.Taxi().CreateDriver(*req)
 	if err != nil {
-		t.logger.Error("failed to create task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to create task")
+		t.logger.Error("failed to create order", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to create order")
 	}
 
 	return &driver, nil
@@ -96,7 +96,7 @@ func (t *TaxiService) GetDriver(ctx context.Context, req *pb.ByIdReq) (*pb.Drive
 	driver, err := t.storage.Taxi().GetDriver(req.GetId())
 	if err != nil {
 		t.logger.Error("failed to get task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to get task")
+		return nil, status.Error(codes.Internal, "failed to get order")
 	}
 
 	return &driver, nil
@@ -105,8 +105,8 @@ func (t *TaxiService) GetDriver(ctx context.Context, req *pb.ByIdReq) (*pb.Drive
 func (t *TaxiService) UpdateDriver(ctx context.Context, req *pb.Driver) (*pb.Driver, error) {
 	driver, err := t.storage.Taxi().UpdateDriver(*req)
 	if err != nil {
-		t.logger.Error("failed to update task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to update task")
+		t.logger.Error("failed to update driver", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to update order")
 	}
 
 	return &driver, nil
@@ -115,8 +115,8 @@ func (t *TaxiService) UpdateDriver(ctx context.Context, req *pb.Driver) (*pb.Dri
 func (t *TaxiService) DeleteDriver(ctx context.Context, req *pb.ByIdReq) (*pb.EmptyResp, error) {
 	err := t.storage.Taxi().DeleteDriver(req.Id)
 	if err != nil {
-		t.logger.Error("failed to delete task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to delete task")
+		t.logger.Error("failed to delete driver", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to delete order")
 	}
 
 	return &pb.EmptyResp{}, nil
@@ -133,8 +133,8 @@ func (t *TaxiService) CreateOrder(ctx context.Context, req *pb.Order) (*pb.FullO
 
 	fullorder, err := t.storage.Taxi().CreateOrder(*req)
 	if err != nil {
-		t.logger.Error("failed to create task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to create task")
+		t.logger.Error("failed to create order", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to create order")
 	}
 
 	return &fullorder, nil
@@ -143,8 +143,8 @@ func (t *TaxiService) CreateOrder(ctx context.Context, req *pb.Order) (*pb.FullO
 func (t *TaxiService) GetOrder(ctx context.Context, req *pb.ByIdReq) (*pb.FullOrder, error) {
 	order, err := t.storage.Taxi().GetOrder(req.GetId())
 	if err != nil {
-		t.logger.Error("failed to get task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to get task")
+		t.logger.Error("failed to get order", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to get order")
 	}
 
 	return &order, nil
@@ -153,8 +153,8 @@ func (t *TaxiService) GetOrder(ctx context.Context, req *pb.ByIdReq) (*pb.FullOr
 func (t *TaxiService) UpdateOrder(ctx context.Context, req *pb.Order) (*pb.Order, error) {
 	order, err := t.storage.Taxi().UpdateOrder(*req)
 	if err != nil {
-		t.logger.Error("failed to update task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to update task")
+		t.logger.Error("failed to update order", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to update order")
 	}
 
 	return &order, nil
@@ -163,8 +163,8 @@ func (t *TaxiService) UpdateOrder(ctx context.Context, req *pb.Order) (*pb.Order
 func (t *TaxiService) DeleteOrder(ctx context.Context, req *pb.ByIdReq) (*pb.EmptyResp, error) {
 	err := t.storage.Taxi().DeleteOrder(req.Id)
 	if err != nil {
-		t.logger.Error("failed to delete task", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to delete task")
+		t.logger.Error("failed to delete order", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to delete order")
 	}
 
 	return &pb.EmptyResp{}, nil
@@ -173,8 +173,8 @@ func (t *TaxiService) DeleteOrder(ctx context.Context, req *pb.ByIdReq) (*pb.Emp
 func (t *TaxiService) ListOrder(ctx context.Context, req *pb.ListReq) (*pb.ListResp, error) {
 	orders, count, err := t.storage.Taxi().ListOrder(req.ClientId, req.From, req.To, req.Page, req.Limit)
 	if err != nil {
-		t.logger.Error("failed to list tasks", l.Error(err))
-		return nil, status.Error(codes.Internal, "failed to list tasks")
+		t.logger.Error("failed to list orders", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed to list orders")
 	}
 
 	return &pb.ListResp{

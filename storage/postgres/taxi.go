@@ -3,7 +3,6 @@ package postgres
 import (
 	"database/sql"
 	"time"
-	// "fmt"
 
 	"github.com/jmoiron/sqlx"
 
@@ -163,7 +162,7 @@ func (t *taxiRepo) CreateOrder(order pb.Order) (pb.FullOrder, error) {
 	var id string
 	err := t.db.QueryRow(`
         INSERT INTO orders(id, driver_id, client_id, status)
-        VALUES ($1,$2,$3) returning id`, order.Id, order.DriverId, order.ClientId, order.Status).Scan(&id)
+        VALUES ($1,$2,$3, $4) returning id`, order.Id, order.DriverId, order.ClientId, order.Status).Scan(&id)
 	if err != nil {
 		return pb.FullOrder{}, err
 	}
@@ -194,14 +193,35 @@ func (t *taxiRepo) GetOrder(id string) (pb.FullOrder, error) {
 		return pb.FullOrder{}, err
 	}
 
-	*fullOrder.Driver, err = t.GetDriver(driverId)
-	*fullOrder.Client, err = t.GetClient(clientId)
+	driver, err := t.GetDriver(driverId)
+	if err != nil {
+		return pb.FullOrder{}, err
+	}
+
+	client, err := t.GetClient(clientId)
+	if err != nil {
+		return pb.FullOrder{}, err
+	}
+
+	fullOrder.Driver = &driver
+	fullOrder.Client = &client
 
 	return fullOrder, nil
 }
 
 
 func (t *taxiRepo) UpdateOrder(order pb.Order) (pb.Order, error) {
+	var status string
+
+	err := t.db.QueryRow(`SELECT status from orders WHERE id=$1`,order.Id).Scan(&status)
+	if err != nil {
+		return pb.Order{}, err
+	}
+
+	if status == "accepted" && order.Status == "cancelled" || status == "finished" && order.Status == "cancelled" {
+		return pb.Order{}, sql.ErrNoRows
+	}  
+
 	result, err := t.db.Exec(`UPDATE orders SET status=$2, updated_at=current_timestamp WHERE id=$1`,
 		order.Id, order.Status)
 	if err != nil {
@@ -218,6 +238,8 @@ func (t *taxiRepo) UpdateOrder(order pb.Order) (pb.Order, error) {
 	}
 	
 	order.Status = res.Status
+	order.DriverId = res.Client.Id
+	order.ClientId = res.Client.Id
 	
 	return order, nil
 }
@@ -240,11 +262,11 @@ func (t *taxiRepo) ListOrder(clientId string, from, to string, page, limit int64
 	
 	if from == "" || to == "" {
 		from = "2000-01-01"
-		to = time.Now().String()
+		to = time.Now().AddDate(0, 0, 1).Format("2006-01-02")
 	}
 	
 	rows, err := t.db.Queryx(
-		`SELECT id, driver_id, client_id, status FROM orders WHERE id = $1 and created_at > $2::timestamp and created at < $3::timestamp LIMIT $4 OFFSET $5`,
+		`SELECT id, driver_id, client_id, status FROM orders WHERE client_id = $1 and created_at >= $2 and created_at <= $3 LIMIT $4 OFFSET $5`,
 		clientId, from, to, limit, offset)
 	if err != nil {
 		return nil, 0, err
@@ -261,13 +283,15 @@ func (t *taxiRepo) ListOrder(clientId string, from, to string, page, limit int64
 	)
 	for rows.Next() {
 		err = rows.Scan(&order.Id, &order.DriverId, &order.ClientId, &order.Status)
-	if err != nil {
+		if err != nil {
 			return nil, 0, err
 		}
 		orders = append(orders, &order)
 	}
 
-	err = t.db.QueryRow(`SELECT count(*) FROM orders WHERE id = $1 and created_at > $2::timestamp and created at < $3::timestamp`).Scan(&count)
+	err = t.db.QueryRow(
+		`SELECT count(*) FROM orders WHERE client_id = $1 and created_at >= $2 and created_at <= $3`,
+		clientId, from, to).Scan(&count)
 	if err != nil {
 		return nil, 0, err
 	}
