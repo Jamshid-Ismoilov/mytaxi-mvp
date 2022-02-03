@@ -36,6 +36,7 @@ func main() {
 
 	pgStorage := storage.NewStoragePg(connDB)
 
+	// o'zgartirish
 	taxiService := service.NewTaxiService(pgStorage, log)
 
 	lis, err := net.Listen("tcp", cfg.RPCPort)
